@@ -1,0 +1,95 @@
+services:
+    app:
+        build:
+            context: .
+            dockerfile: ./docker/php/Dockerfile
+        # restart: unless-stopped
+        depends_on:
+            - db
+        volumes:
+            - .:/var/www/html:cached
+            - /var/www/html/vendor # Exclude vendor folder from being mounted
+            - /var/www/html/node_modules # Exclude node_modules folder from being mounted
+            - ./.env:/var/www/html/.env
+        command: >
+            sh -c "mkdir -p storage bootstrap/cache &&
+                chown -R www-data:www-data storage bootstrap/cache &&
+                chmod -R 775 storage bootstrap/cache &&
+                npm run build &&
+                php-fpm"
+
+    horizon:
+        build:
+            context: ./
+            dockerfile: ./docker/php/Dockerfile
+        # restart: unless-stopped
+        environment:
+            IS_WORKER: "true"
+        depends_on:
+            - db
+            - redis
+        volumes:
+            - .:/var/www/html:cached
+            - /var/www/html/vendor
+            - ./.env:/var/www/html/.env
+        command: >
+            sh -c "mkdir -p storage bootstrap/cache &&
+                chown -R www-data:www-data storage bootstrap/cache &&
+                chmod -R 775 storage bootstrap/cache &&
+                php artisan horizon"
+
+    schedule:
+        build:
+            context: ./
+            dockerfile: ./docker/php/Dockerfile
+        # restart: unless-stopped
+        environment:
+            IS_WORKER: "true"
+        depends_on:
+            - db
+            - redis
+        volumes:
+            - .:/var/www/html:cached
+            - /var/www/html/vendor
+            - ./.env:/var/www/html/.env
+        command: >
+            sh -c "mkdir -p storage bootstrap/cache &&
+                chown -R www-data:www-data storage bootstrap/cache &&
+                chmod -R 775 storage bootstrap/cache &&
+                php artisan schedule:work"
+
+    nginx:
+        image: nginx:alpine
+        ports:
+            - 80:80
+        volumes:
+            - ./docker/nginx/default.conf:/etc/nginx/conf.d/default.conf
+            - .:/var/www/html:cached
+            - /var/www/html/vendor
+
+    db:
+        build:
+            context: ./
+            dockerfile: ./docker/mysql/Dockerfile
+        ports:
+            - 3306:3306
+        # restart: always
+        volumes:
+            - db-data:/var/lib/mysql
+            - ./docker/mysql/init.sql:/docker-entrypoint-initdb.d/init.sql
+        environment:
+            - MYSQL_DATABASE=${DB_DATABASE}
+            - MYSQL_USER=${DB_USERNAME}
+            - MYSQL_PASSWORD=${DB_PASSWORD}
+            - MYSQL_ROOT_PASSWORD=${DB_PASSWORD}
+        command: --default-authentication-plugin=mysql_native_password
+
+    redis:
+        image: redis:alpine
+        # restart: always
+        volumes:
+            - redis-data:/bitnami/redis/data
+
+volumes:
+    db-data:
+    redis-data:

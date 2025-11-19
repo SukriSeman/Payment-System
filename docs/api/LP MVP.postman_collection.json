@@ -1,0 +1,1021 @@
+{
+	"info": {
+		"_postman_id": "fa19e4d2-00d2-440d-9775-e87841426135",
+		"name": "LP MVP",
+		"schema": "https://schema.getpostman.com/json/collection/v2.1.0/collection.json",
+		"_exporter_id": "14953394"
+	},
+	"item": [
+		{
+			"name": "Auth",
+			"item": [
+				{
+					"name": "Login",
+					"event": [
+						{
+							"listen": "test",
+							"script": {
+								"exec": [
+									"// 1. Check status code is 200\r",
+									"pm.test(\"Status code is 200\", function () {\r",
+									"    pm.response.to.have.status(200);\r",
+									"});\r",
+									"\r",
+									"// 2. Only save token if status is 200\r",
+									"if (pm.response.code === 200) {\r",
+									"    let json = pm.response.json();\r",
+									"\r",
+									"    if (json.data && json.data.token) {\r",
+									"        pm.collectionVariables.set(\"api_token\", json.data.token);\r",
+									"        pm.test(\"Token saved to variable\", function () {\r",
+									"            pm.expect(pm.collectionVariables.get(\"api_token\")).to.exist;\r",
+									"        });\r",
+									"    } else {\r",
+									"        pm.test(\"Token missing in response\", function () {\r",
+									"            pm.expect.fail(\"Response does not contain data.token\");\r",
+									"        });\r",
+									"    }\r",
+									"}"
+								],
+								"type": "text/javascript",
+								"packages": {},
+								"requests": {}
+							}
+						}
+					],
+					"request": {
+						"method": "POST",
+						"header": [],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "email",
+									"value": "user1@mail.com",
+									"description": "Email",
+									"type": "text"
+								},
+								{
+									"key": "password",
+									"value": "secret",
+									"description": "Password",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/login",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"login"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "user1@mail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "secret",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost/api/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 06:32:46 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"token\": \"5|yneA3oW2ubnfv3jj4v8xT4r0oj1JRqAWoMn2pfzbee44d971\"\n    }\n}"
+						},
+						{
+							"name": "Error - Invalid credentials",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"body": {
+									"mode": "formdata",
+									"formdata": [
+										{
+											"key": "email",
+											"value": "user1@mail.com",
+											"type": "text"
+										},
+										{
+											"key": "password",
+											"value": "secret1",
+											"type": "text"
+										}
+									]
+								},
+								"url": {
+									"raw": "http://localhost/api/login",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"login"
+									]
+								}
+							},
+							"status": "Forbidden",
+							"code": 403,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 06:33:08 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"error\",\n    \"message\": \"Invalid credentials\"\n}"
+						}
+					]
+				},
+				{
+					"name": "Logout",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/logout",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"logout"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [],
+								"url": {
+									"raw": "http://localhost/api/logout",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"logout"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 06:35:38 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": []\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Product",
+			"item": [
+				{
+					"name": "Product list",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/products",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"products"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost/api/products",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"products"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 07:08:23 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"name\": \"Et Basic Plan\",\n            \"cost\": \"MYR 771.64\"\n        },\n        {\n            \"id\": 2,\n            \"name\": \"Corrupti Basic Plan\",\n            \"cost\": \"MYR 713.44\"\n        },\n        {\n            \"id\": 3,\n            \"name\": \"Dolor Pro Plan\",\n            \"cost\": \"MYR 309.17\"\n        },\n        {\n            \"id\": 4,\n            \"name\": \"In Starter Plan\",\n            \"cost\": \"MYR 16.19\"\n        },\n        {\n            \"id\": 5,\n            \"name\": \"Suscipit Starter Plan\",\n            \"cost\": \"MYR 193.33\"\n        },\n        {\n            \"id\": 6,\n            \"name\": \"Veritatis Starter Plan\",\n            \"cost\": \"MYR 116.25\"\n        },\n        {\n            \"id\": 7,\n            \"name\": \"Repellendus Pro Plan\",\n            \"cost\": \"MYR 669.89\"\n        },\n        {\n            \"id\": 8,\n            \"name\": \"Rerum Pro Plan\",\n            \"cost\": \"MYR 72.55\"\n        },\n        {\n            \"id\": 9,\n            \"name\": \"Ex Starter Plan\",\n            \"cost\": \"MYR 823.52\"\n        },\n        {\n            \"id\": 10,\n            \"name\": \"Nobis Starter Plan\",\n            \"cost\": \"MYR 546.22\"\n        },\n        {\n            \"id\": 11,\n            \"name\": \"Quis Pro Plan\",\n            \"cost\": \"MYR 845.68\"\n        },\n        {\n            \"id\": 12,\n            \"name\": \"Sunt Pro Plan\",\n            \"cost\": \"MYR 104.59\"\n        },\n        {\n            \"id\": 13,\n            \"name\": \"Sequi Basic Plan\",\n            \"cost\": \"MYR 732.98\"\n        },\n        {\n            \"id\": 14,\n            \"name\": \"Doloremque Pro Plan\",\n            \"cost\": \"MYR 83.08\"\n        },\n        {\n            \"id\": 15,\n            \"name\": \"Quas Pro Plan\",\n            \"cost\": \"MYR 950.53\"\n        },\n        {\n            \"id\": 16,\n            \"name\": \"Maiores Pro Plan\",\n            \"cost\": \"MYR 626.20\"\n        },\n        {\n            \"id\": 17,\n            \"name\": \"Aut Pro Plan\",\n            \"cost\": \"MYR 51.59\"\n        },\n        {\n            \"id\": 18,\n            \"name\": \"Alias Starter Plan\",\n            \"cost\": \"MYR 675.08\"\n        },\n        {\n            \"id\": 19,\n            \"name\": \"Nobis Basic Plan\",\n            \"cost\": \"MYR 720.25\"\n        },\n        {\n            \"id\": 20,\n            \"name\": \"Eos Starter Plan\",\n            \"cost\": \"MYR 504.70\"\n        },\n        {\n            \"id\": 21,\n            \"name\": \"Qui Basic Plan\",\n            \"cost\": \"MYR 317.26\"\n        },\n        {\n            \"id\": 22,\n            \"name\": \"Quasi Pro Plan\",\n            \"cost\": \"MYR 831.10\"\n        },\n        {\n            \"id\": 23,\n            \"name\": \"Fugit Basic Plan\",\n            \"cost\": \"MYR 907.62\"\n        },\n        {\n            \"id\": 24,\n            \"name\": \"Voluptate Basic Plan\",\n            \"cost\": \"MYR 158.77\"\n        },\n        {\n            \"id\": 25,\n            \"name\": \"Dolor Basic Plan\",\n            \"cost\": \"MYR 36.53\"\n        },\n        {\n            \"id\": 26,\n            \"name\": \"Aspernatur Starter Plan\",\n            \"cost\": \"MYR 189.23\"\n        },\n        {\n            \"id\": 27,\n            \"name\": \"Rerum Pro Plan\",\n            \"cost\": \"MYR 632.59\"\n        },\n        {\n            \"id\": 28,\n            \"name\": \"Quis Basic Plan\",\n            \"cost\": \"MYR 152.22\"\n        },\n        {\n            \"id\": 29,\n            \"name\": \"Dolorum Pro Plan\",\n            \"cost\": \"MYR 127.41\"\n        },\n        {\n            \"id\": 30,\n            \"name\": \"Mollitia Pro Plan\",\n            \"cost\": \"MYR 599.30\"\n        },\n        {\n            \"id\": 31,\n            \"name\": \"Quam Pro Plan\",\n            \"cost\": \"MYR 762.28\"\n        },\n        {\n            \"id\": 32,\n            \"name\": \"Voluptas Basic Plan\",\n            \"cost\": \"MYR 449.97\"\n        },\n        {\n            \"id\": 33,\n            \"name\": \"Ut Basic Plan\",\n            \"cost\": \"MYR 918.84\"\n        },\n        {\n            \"id\": 34,\n            \"name\": \"Ad Pro Plan\",\n            \"cost\": \"MYR 132.89\"\n        },\n        {\n            \"id\": 35,\n            \"name\": \"Atque Starter Plan\",\n            \"cost\": \"MYR 993.92\"\n        },\n        {\n            \"id\": 36,\n            \"name\": \"Repellat Pro Plan\",\n            \"cost\": \"MYR 612.07\"\n        },\n        {\n            \"id\": 37,\n            \"name\": \"Repellat Starter Plan\",\n            \"cost\": \"MYR 629.80\"\n        },\n        {\n            \"id\": 38,\n            \"name\": \"Perspiciatis Starter Plan\",\n            \"cost\": \"MYR 73.37\"\n        },\n        {\n            \"id\": 39,\n            \"name\": \"Quasi Basic Plan\",\n            \"cost\": \"MYR 12.15\"\n        },\n        {\n            \"id\": 40,\n            \"name\": \"Eligendi Basic Plan\",\n            \"cost\": \"MYR 151.15\"\n        },\n        {\n            \"id\": 41,\n            \"name\": \"Ipsum Pro Plan\",\n            \"cost\": \"MYR 374.31\"\n        },\n        {\n            \"id\": 42,\n            \"name\": \"Incidunt Basic Plan\",\n            \"cost\": \"MYR 358.83\"\n        },\n        {\n            \"id\": 43,\n            \"name\": \"Sit Pro Plan\",\n            \"cost\": \"MYR 361.73\"\n        },\n        {\n            \"id\": 44,\n            \"name\": \"Quas Basic Plan\",\n            \"cost\": \"MYR 968.48\"\n        },\n        {\n            \"id\": 45,\n            \"name\": \"Natus Pro Plan\",\n            \"cost\": \"MYR 336.72\"\n        },\n        {\n            \"id\": 46,\n            \"name\": \"Est Basic Plan\",\n            \"cost\": \"MYR 228.40\"\n        },\n        {\n            \"id\": 47,\n            \"name\": \"Aliquid Starter Plan\",\n            \"cost\": \"MYR 482.11\"\n        },\n        {\n            \"id\": 48,\n            \"name\": \"Fugit Basic Plan\",\n            \"cost\": \"MYR 234.42\"\n        },\n        {\n            \"id\": 49,\n            \"name\": \"Debitis Starter Plan\",\n            \"cost\": \"MYR 116.03\"\n        },\n        {\n            \"id\": 50,\n            \"name\": \"Deserunt Starter Plan\",\n            \"cost\": \"MYR 41.14\"\n        }\n    ]\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Order",
+			"item": [
+				{
+					"name": "Order List",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost/api/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"orders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 14:26:23 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": [\n        {\n            \"id\": 1,\n            \"item\": [\n                {\n                    \"id\": 1,\n                    \"product_name\": \"Voluptate Basic Plan\",\n                    \"quantity\": 5,\n                    \"unit_price\": \"MYR 331.34\",\n                    \"total_price\": \"MYR 1656.70\"\n                },\n                {\n                    \"id\": 2,\n                    \"product_name\": \"Voluptatem Pro Plan\",\n                    \"quantity\": 2,\n                    \"unit_price\": \"MYR 671.47\",\n                    \"total_price\": \"MYR 1342.94\"\n                },\n                {\n                    \"id\": 3,\n                    \"product_name\": \"Fugiat Basic Plan\",\n                    \"quantity\": 6,\n                    \"unit_price\": \"MYR 259.71\",\n                    \"total_price\": \"MYR 1558.26\"\n                },\n                {\n                    \"id\": 4,\n                    \"product_name\": \"Debitis Pro Plan\",\n                    \"quantity\": 8,\n                    \"unit_price\": \"MYR 22.84\",\n                    \"total_price\": \"MYR 182.72\"\n                },\n                {\n                    \"id\": 5,\n                    \"product_name\": \"Maxime Basic Plan\",\n                    \"quantity\": 9,\n                    \"unit_price\": \"MYR 139.99\",\n                    \"total_price\": \"MYR 1259.91\"\n                }\n            ]\n        },\n        {\n            \"id\": 2,\n            \"item\": [\n                {\n                    \"id\": 6,\n                    \"product_name\": \"Ipsam Pro Plan\",\n                    \"quantity\": 5,\n                    \"unit_price\": \"MYR 498.41\",\n                    \"total_price\": \"MYR 2492.05\"\n                },\n                {\n                    \"id\": 7,\n                    \"product_name\": \"Voluptatem Pro Plan\",\n                    \"quantity\": 1,\n                    \"unit_price\": \"MYR 671.47\",\n                    \"total_price\": \"MYR 671.47\"\n                },\n                {\n                    \"id\": 8,\n                    \"product_name\": \"At Basic Plan\",\n                    \"quantity\": 6,\n                    \"unit_price\": \"MYR 907.33\",\n                    \"total_price\": \"MYR 5443.98\"\n                },\n                {\n                    \"id\": 9,\n                    \"product_name\": \"Fugit Basic Plan\",\n                    \"quantity\": 3,\n                    \"unit_price\": \"MYR 307.06\",\n                    \"total_price\": \"MYR 921.18\"\n                },\n                {\n                    \"id\": 10,\n                    \"product_name\": \"Dolor Starter Plan\",\n                    \"quantity\": 1,\n                    \"unit_price\": \"MYR 33.86\",\n                    \"total_price\": \"MYR 33.86\"\n                }\n            ]\n        }\n    ]\n}"
+						}
+					]
+				},
+				{
+					"name": "Order Details",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/orders/1",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"orders",
+								"1"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "GET",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"url": {
+									"raw": "http://localhost/api/orders/1",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"orders",
+										"1"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 14:23:11 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"id\": 1,\n        \"item\": [\n            {\n                \"id\": 1,\n                \"product_name\": \"Voluptate Basic Plan\",\n                \"quantity\": 5,\n                \"unit_price\": \"MYR 331.34\",\n                \"total_price\": \"MYR 1656.70\"\n            },\n            {\n                \"id\": 2,\n                \"product_name\": \"Voluptatem Pro Plan\",\n                \"quantity\": 2,\n                \"unit_price\": \"MYR 671.47\",\n                \"total_price\": \"MYR 1342.94\"\n            },\n            {\n                \"id\": 3,\n                \"product_name\": \"Fugiat Basic Plan\",\n                \"quantity\": 6,\n                \"unit_price\": \"MYR 259.71\",\n                \"total_price\": \"MYR 1558.26\"\n            },\n            {\n                \"id\": 4,\n                \"product_name\": \"Debitis Pro Plan\",\n                \"quantity\": 8,\n                \"unit_price\": \"MYR 22.84\",\n                \"total_price\": \"MYR 182.72\"\n            },\n            {\n                \"id\": 5,\n                \"product_name\": \"Maxime Basic Plan\",\n                \"quantity\": 9,\n                \"unit_price\": \"MYR 139.99\",\n                \"total_price\": \"MYR 1259.91\"\n            }\n        ]\n    }\n}"
+						}
+					]
+				},
+				{
+					"name": "Create Order",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "raw",
+							"raw": "{\r\n    \"items\" : [\r\n        { \"id\" : 4, \"quantity\" : 5 },\r\n        { \"id\" : 2, \"quantity\" : 1 },\r\n        { \"id\" : 48, \"quantity\" : 6 },\r\n        { \"id\" : 8, \"quantity\" : 3 },\r\n        { \"id\" : 37, \"quantity\" : 1 }\r\n    ]\r\n}",
+							"options": {
+								"raw": {
+									"language": "json"
+								}
+							}
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/orders",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"orders"
+							]
+						}
+					},
+					"response": [
+						{
+							"name": "Success",
+							"originalRequest": {
+								"method": "POST",
+								"header": [
+									{
+										"key": "Accept",
+										"value": "application/json",
+										"type": "text"
+									}
+								],
+								"body": {
+									"mode": "raw",
+									"raw": "{\r\n    \"items\" : [\r\n        { \"id\" : 1, \"quantity\" : 5 },\r\n        { \"id\" : 2, \"quantity\" : 2 },\r\n        { \"id\" : 43, \"quantity\" : 6 },\r\n        { \"id\" : 6, \"quantity\" : 8 },\r\n        { \"id\" : 32, \"quantity\" : 9 }\r\n    ]\r\n}",
+									"options": {
+										"raw": {
+											"language": "json"
+										}
+									}
+								},
+								"url": {
+									"raw": "http://localhost/api/orders",
+									"protocol": "http",
+									"host": [
+										"localhost"
+									],
+									"path": [
+										"api",
+										"orders"
+									]
+								}
+							},
+							"status": "OK",
+							"code": 200,
+							"_postman_previewlanguage": null,
+							"header": [
+								{
+									"key": "Server",
+									"value": "nginx/1.29.3"
+								},
+								{
+									"key": "Content-Type",
+									"value": "application/json"
+								},
+								{
+									"key": "Transfer-Encoding",
+									"value": "chunked"
+								},
+								{
+									"key": "Connection",
+									"value": "keep-alive"
+								},
+								{
+									"key": "X-Powered-By",
+									"value": "PHP/8.3.27"
+								},
+								{
+									"key": "Cache-Control",
+									"value": "no-cache, private"
+								},
+								{
+									"key": "Date",
+									"value": "Sun, 16 Nov 2025 14:15:52 GMT"
+								},
+								{
+									"key": "Access-Control-Allow-Origin",
+									"value": "*"
+								}
+							],
+							"cookie": [],
+							"body": "{\n    \"status\": \"success\",\n    \"data\": {\n        \"order_id\": 1\n    }\n}"
+						}
+					]
+				}
+			]
+		},
+		{
+			"name": "Payment",
+			"item": [
+				{
+					"name": "Create payment",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "order_id",
+									"value": "3",
+									"type": "text"
+								},
+								{
+									"key": "idempotency_key",
+									"value": "abccde12384jssdswwwss",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/payments",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"payments"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Payment capture",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "order_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "idempotency_key",
+									"value": "abccde12384jssdswwwss",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/payments/5/capture",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"5",
+								"capture"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Payment void",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [],
+						"url": {
+							"raw": "{{baseURL}}/api/payments/4/void",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"payments",
+								"4",
+								"void"
+							]
+						}
+					},
+					"response": []
+				},
+				{
+					"name": "Refund",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "POST",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"body": {
+							"mode": "formdata",
+							"formdata": [
+								{
+									"key": "payment_id",
+									"value": "1",
+									"type": "text"
+								},
+								{
+									"key": "amount",
+									"value": "186045",
+									"description": "amount in cents value",
+									"type": "text"
+								},
+								{
+									"key": "reason",
+									"value": "Lorem ipsum dolor sit amet consectetur adipiscing elit. Dolor sit amet consectetur adipiscing elit quisque faucibus.",
+									"type": "text"
+								}
+							]
+						},
+						"url": {
+							"raw": "{{baseURL}}/api/refunds",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"refunds"
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		},
+		{
+			"name": "Report",
+			"item": [
+				{
+					"name": "Reconciliation",
+					"request": {
+						"auth": {
+							"type": "bearer",
+							"bearer": [
+								{
+									"key": "token",
+									"value": "{{api_token}}",
+									"type": "string"
+								}
+							]
+						},
+						"method": "GET",
+						"header": [
+							{
+								"key": "Accept",
+								"value": "application/json",
+								"type": "text"
+							}
+						],
+						"url": {
+							"raw": "{{baseURL}}/api/reports/daily-settlement?date=2025-11-17",
+							"host": [
+								"{{baseURL}}"
+							],
+							"path": [
+								"api",
+								"reports",
+								"daily-settlement"
+							],
+							"query": [
+								{
+									"key": "date",
+									"value": "2025-11-17",
+									"description": "Formart : YYYY-MM-DD"
+								}
+							]
+						}
+					},
+					"response": []
+				}
+			]
+		}
+	],
+	"event": [
+		{
+			"listen": "prerequest",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		},
+		{
+			"listen": "test",
+			"script": {
+				"type": "text/javascript",
+				"packages": {},
+				"requests": {},
+				"exec": [
+					""
+				]
+			}
+		}
+	],
+	"variable": [
+		{
+			"key": "baseURL",
+			"value": "http://localhost"
+		},
+		{
+			"key": "api_token",
+			"value": ""
+		}
+	]
+}
