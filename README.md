@@ -101,7 +101,7 @@ docker compose exec app php artisan migrate
 
 ### **7. Seed the database**
 ```sh
-docker compose exec app php artisan db::seed
+docker compose exec app php artisan db:seed
 ```
 --- 
 
